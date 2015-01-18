@@ -17,7 +17,17 @@
         }
 
         function testReduce(data) {
-            console.log(data);
+            var r = {};
+
+            for (var dk in data) {
+                var d = data[dk];
+                for (var k in d) {
+                    if (!r.hasOwnProperty(k)) r[k] = [];
+                    r[k] = r[k].concat(d[k]);
+                }
+            }
+
+            return r;
         }
 
         function run() {
@@ -32,10 +42,11 @@
             console.log("creating " + workers + " parallel workers dividing " + data.length + " jobs");
 
             var p = new Parallel(data, {
+                //evalPath: '/static/paralleljs/lib/eval.js', // needed to require a js file
                 maxWorkers: workers
             });
 
-            p.map(map).reduce(testReduce).then(then);
+            p.map(map).reduce(reduce).then(then);
             //p.map(map).then(then);
         }
 
@@ -53,13 +64,25 @@
 <br/>
 
     <textarea id="mapfn" name="mapfn" cols="40" rows="6">
-function map(data) { var r = {}; r[data.length] = data; return r; };
+function map(data) { var r = {}; r[data.length] = [data]; return r; };
     </textarea>
     <textarea id="reducefn" name="reducefn" cols="40" rows="6">
-function reduce(data) { return data; };
+function reduce(data) {
+    var r = {};
+
+    for (var dk in data) {
+        var d = data[dk];
+        for (var k in d) {
+            if (!r.hasOwnProperty(k)) r[k] = [];
+            r[k] = r[k].concat(d[k]);
+        }
+    }
+
+    return r;
+}
     </textarea>
     <textarea id="thenfn" name="thenfn" cols="40" rows="6">
-function then(data) { console.log(data.length + " results"); console.log(data); };
+function then(data) { console.log("" + data.length + " results"); console.log(data); };
     </textarea>
 <br/>
     <textarea id="data" name="data" cols="50" rows="10">
