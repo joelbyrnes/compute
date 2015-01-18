@@ -30,6 +30,16 @@
             return r;
         }
 
+        function testthen(data) {
+            console.log("" + data.length + " results"); console.log(data);
+
+            var elem = $("#results");
+            elem.html(JSON.stringify(data));
+            //for (var dk in data) {
+            //    elem.html(JSON.stringify(data[dk]))
+            //}
+        }
+
         function run() {
             var workers = parseInt($('#workers').val());
             eval($("#mapfn").val());
@@ -46,7 +56,7 @@
                 maxWorkers: workers
             });
 
-            p.map(map).reduce(reduce).then(then);
+            p.map(map).reduce(reduce).then(testthen);
             //p.map(map).then(then);
         }
 
@@ -63,10 +73,14 @@
 <input type="button" value="Resume" onclick="unPause()"/>
 <br/>
 
-    <textarea id="mapfn" name="mapfn" cols="40" rows="6">
-function map(data) { var r = {}; r[data.length] = [data]; return r; };
+    <textarea id="mapfn" name="mapfn" cols="40" rows="10">
+function map(data) {
+    var r = {};
+    r[data.length] = [data];
+    return r;
+};
     </textarea>
-    <textarea id="reducefn" name="reducefn" cols="40" rows="6">
+    <textarea id="reducefn" name="reducefn" cols="40" rows="10">
 function reduce(data) {
     var r = {};
 
@@ -81,8 +95,11 @@ function reduce(data) {
     return r;
 }
     </textarea>
-    <textarea id="thenfn" name="thenfn" cols="40" rows="6">
-function then(data) { console.log("" + data.length + " results"); console.log(data); };
+    <textarea id="thenfn" name="thenfn" cols="40" rows="10">
+function then(data) {
+    console.log("" + data.length + " results");
+    console.log(data);
+};
     </textarea>
 <br/>
     <textarea id="data" name="data" cols="50" rows="10">
@@ -293,7 +310,9 @@ function getData(data) {
     return $("#data").val().split("\n");
 };
     </textarea>
-<input type="button" value="Run" onclick="run();"/>
+<input type="button" value="Run" onclick="run();"/><br/>
+<textarea id="results" name="results" cols="50" rows="10">
+</textarea>
 
 
 </body>
