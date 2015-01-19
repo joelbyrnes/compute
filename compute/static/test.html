@@ -7,6 +7,7 @@
     <script src="/static/paralleljs/lib/parallel.js"></script>
     <script>
         var pause = false;
+        var start = null;
 
         function setPause() {
             pause = true;
@@ -16,28 +17,12 @@
             pause = false;
         }
 
-        function testReduce(data) {
-            var r = {};
+        function internalThen(data) {
+            $("#resultsMessage").html("Work completed in " + (Date.now() - start) + " millis; " + _.keys(data).length + " results.");
 
-            for (var dk in data) {
-                var d = data[dk];
-                for (var k in d) {
-                    if (!r.hasOwnProperty(k)) r[k] = [];
-                    r[k] = r[k].concat(d[k]);
-                }
-            }
+            console.log(data);
 
-            return r;
-        }
-
-        function testthen(data) {
-            console.log("" + data.length + " results"); console.log(data);
-
-            var elem = $("#results");
-            elem.html(JSON.stringify(data));
-            //for (var dk in data) {
-            //    elem.html(JSON.stringify(data[dk]))
-            //}
+            this.thenFunction(data);
         }
 
         function run() {
@@ -46,6 +31,8 @@
             eval($("#reducefn").val());
             eval($("#thenfn").val());
             eval($("#datafn").val());
+
+            this.thenFunction = then;
 
             var data = getData();
 
@@ -56,8 +43,8 @@
                 maxWorkers: workers
             });
 
-            p.map(map).reduce(reduce).then(testthen);
-            //p.map(map).then(then);
+            start = new Date();
+            p.map(map).reduce(reduce).then(internalThen);
         }
 
     </script>
@@ -73,6 +60,8 @@
 <input type="button" value="Resume" onclick="unPause()"/>
 <br/>
 
+<div style="float: left">
+    <label for="mapfn">Map</label><br/>
     <textarea id="mapfn" name="mapfn" cols="40" rows="10">
 function map(data) {
     var r = {};
@@ -80,6 +69,9 @@ function map(data) {
     return r;
 };
     </textarea>
+</div>
+<div style="float: left">
+    <label for="reducefn">Reduce</label><br/>
     <textarea id="reducefn" name="reducefn" cols="40" rows="10">
 function reduce(data) {
     var r = {};
@@ -95,13 +87,24 @@ function reduce(data) {
     return r;
 }
     </textarea>
+</div>
+<div style="float: left">
+    <label for="thenfn">Then</label><br/>
     <textarea id="thenfn" name="thenfn" cols="40" rows="10">
 function then(data) {
-    console.log("" + data.length + " results");
-    console.log(data);
+    var results = "";
+    for (var dk in data) {
+    results += dk + ": " + data[dk].length + "<br/>";
+    }
+
+    var elem = $("#results");
+    elem.html(results);
 };
     </textarea>
+</div>
 <br/>
+<div style="float: left">
+<label for="data">Input data</label><br/>
     <textarea id="data" name="data" cols="50" rows="10">
 a
 able
@@ -305,14 +308,26 @@ consideration
 contain
 contract
     </textarea>
+</div>
+<div style="float: left">
+    <label for="datafn">getData</label><br/>
     <textarea id="datafn" name="datafn" cols="40" rows="6">
 function getData(data) {
     return $("#data").val().split("\n");
 };
     </textarea>
-<input type="button" value="Run" onclick="run();"/><br/>
-<textarea id="results" name="results" cols="50" rows="10">
-</textarea>
+</div>
+<div style="float: left">
+    <input type="button" value="Run" onclick="run();"/>
+</div>
+<br/>
+<div style="float: left">
+    <label for="results">Results</label><br/>
+    <div id="resultsMessage">
+    </div>
+    <div id="results">
+    </div>
+</div>
 
 
 </body>
