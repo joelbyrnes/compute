@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Compute</title>
+    <script src="/static/jquery-2.1.1.js"></script>
+    <script src="/static/underscore-min.js"></script>
+    <script src="/static/paralleljs/lib/parallel.js"></script>
+    <script>
+        var pause = false;
+        var start = null;
+
+        function setPause() {
+            pause = true;
+        }
+
+        function unPause() {
+            pause = false;
+        }
+
+        function internalThen(data) {
+            $("#resultsMessage").html("Work completed in " + (Date.now() - start) + " millis; " + _.keys(data).length + " results.");
+
+            console.log(data);
+
+            this.thenFunction(data);
+        }
+
+        function run() {
+            var workers = parseInt($('#workers').val());
+            eval($("#mapfn").val());
+            eval($("#reducefn").val());
+            eval($("#thenfn").val());
+            eval($("#datafn").val());
+
+            this.thenFunction = then;
+
+            var data = getData();
+
+            console.log("creating " + workers + " parallel workers dividing " + data.length + " jobs");
+
+            var p = new Parallel(data, {
+                //evalPath: '/static/paralleljs/lib/eval.js', // needed to require a js file
+                maxWorkers: workers
+            });
+
+            start = new Date();
+            p.map(map).reduce(reduce).then(internalThen);
+        }
+
+    </script>
+
+
+</head>
+
+<body>
+<label>Workers:
+    <input type="text" name="workers" id="workers" value="2" size="2"/>
+</label>
+<input type="button" value="Pause" onclick="setPause()"/>
+<input type="button" value="Resume" onclick="unPause()"/>
+<br/>
+
+<div style="float: left">
+    <label for="mapfn">Map</label><br/>
+    <textarea id="mapfn" name="mapfn" cols="40" rows="10">
+function map(data) {
+    var r = {};
+    r[data.length] = [data];
+    return r;
+};
+    </textarea>
+</div>
+<div style="float: left">
+    <label for="reducefn">Reduce</label><br/>
+    <textarea id="reducefn" name="reducefn" cols="40" rows="10">
+function reduce(data) {
+    var r = {};
+
+    for (var dk in data) {
+        var d = data[dk];
+        for (var k in d) {
+            if (!r.hasOwnProperty(k)) r[k] = [];
+            r[k] = r[k].concat(d[k]);
+        }
+    }
+
+    return r;
+}
+    </textarea>
+</div>
+<div style="float: left">
+    <label for="thenfn">Then</label><br/>
+    <textarea id="thenfn" name="thenfn" cols="40" rows="10">
+function then(data) {
+    var results = "";
+    for (var dk in data) {
+    results += dk + ": " + data[dk].length + "<br/>";
+    }
+
+    var elem = $("#results");
+    elem.html(results);
+};
+    </textarea>
+</div>
+<br/>
+<div style="float: left">
+<label for="data">Input data</label><br/>
+    <textarea id="data" name="data" cols="50" rows="10">
+a
+able
+aboard
+about
+above
+absence
+accept
+accident
+according
+account
+across
+act
+action
+add
+addition
+address
+adopt
+affair
+afraid
+after
+afternoon
+again
+against
+age
+ago
+agreement
+air
+alike
+all
+allege
+allow
+almost
+alone
+along
+already
+also
+although
+always
+am
+among
+amount
+an
+and
+annual
+another
+answer
+any
+anything
+anyway
+appear
+application
+appoint
+appreciate
+April
+are
+argument
+army
+around
+arrange
+arrangement
+arrest
+arrive
+article
+as
+ask
+assist
+associate
+association
+assure
+at
+athletic
+attempt
+attend
+attention
+August
+aunt
+auto
+automobile
+avenue
+await
+away
+awful
+baby
+back
+bad
+ball
+band
+be
+bear
+beautiful
+became
+because
+become
+bed
+been
+before
+beg
+began
+begin
+beginning
+begun
+behind
+believe
+belong
+beside
+best
+better
+between
+big
+bill
+black
+block
+blow
+blue
+board
+boat
+body
+book
+born
+both
+bought
+box
+boy
+bridge
+bring
+broke
+brother
+brought
+build
+built
+burn
+business
+busy
+but
+buy
+by
+call
+came
+camp
+can
+cannot
+capture
+car
+card
+care
+career
+carried
+carry
+case
+cast
+catch
+cause
+celebration
+cent
+center
+century
+certain
+chain
+change
+character
+charge
+check
+chief
+child
+children
+Christmas
+church
+circular
+circumstance
+cities
+citizen
+city
+claim
+class
+clean
+clear
+clerk
+close
+clothing
+club
+cold
+collect
+colonies
+combination
+come
+comfort
+coming
+command
+committee
+common
+company
+complaint
+complete
+concern
+condition
+conference
+connection
+consider
+consideration
+contain
+contract
+    </textarea>
+</div>
+<div style="float: left">
+    <label for="datafn">getData</label><br/>
+    <textarea id="datafn" name="datafn" cols="40" rows="6">
+function getData(data) {
+    return $("#data").val().split("\n");
+};
+    </textarea>
+</div>
+<div style="float: left">
+    <input type="button" value="Run" onclick="run();"/>
+</div>
+<br/>
+<div style="float: left">
+    <label for="results">Results</label><br/>
+    <div id="resultsMessage">
+    </div>
+    <div id="results">
+    </div>
+</div>
+
+
+</body>
+</html>
