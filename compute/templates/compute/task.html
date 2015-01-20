@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Compute</title>
+    <title>Distributed Task</title>
     <script src="/static/jquery-2.1.1.js"></script>
     <script src="/static/underscore-min.js"></script>
     <script src="/static/paralleljs/lib/parallel.js"></script>
@@ -60,9 +60,16 @@
 <input type="button" value="Resume" onclick="unPause()"/>
 <br/>
 
-<div style="float: left">
+<form name="save_task" action="save_task" method="POST">
+    {% csrf_token %}
+        <label>Name
+            <input type="text" name="name" value=""/>
+        </label>
+    <br/>
+
+    <div style="float: left">
     <label for="mapfn">Map</label><br/>
-    <textarea id="mapfn" name="mapfn" cols="40" rows="10">
+    <textarea id="mapfn" name="map_func" cols="40" rows="10">
 function map(data) {
     var r = {};
     r[data.length] = [data];
@@ -72,7 +79,7 @@ function map(data) {
 </div>
 <div style="float: left">
     <label for="reducefn">Reduce</label><br/>
-    <textarea id="reducefn" name="reducefn" cols="40" rows="10">
+    <textarea id="reducefn" name="reduce_func" cols="40" rows="10">
 function reduce(data) {
     var r = {};
 
@@ -90,7 +97,7 @@ function reduce(data) {
 </div>
 <div style="float: left">
     <label for="thenfn">Then</label><br/>
-    <textarea id="thenfn" name="thenfn" cols="40" rows="10">
+    <textarea id="thenfn" name="then_func" cols="40" rows="10">
 function then(data) {
     var results = "";
     for (var dk in data) {
@@ -104,8 +111,8 @@ function then(data) {
 </div>
 <br/>
 <div style="float: left">
-<label for="data">Input data</label><br/>
-    <textarea id="data" name="data" cols="50" rows="10">
+<label for="input">Input</label><br/>
+    <textarea id="input" name="input" cols="50" rows="10">
 a
 able
 aboard
@@ -311,12 +318,17 @@ contract
 </div>
 <div style="float: left">
     <label for="datafn">getData</label><br/>
-    <textarea id="datafn" name="datafn" cols="40" rows="6">
+    <textarea id="datafn" name="data_func" cols="40" rows="6">
 function getData(data) {
     return $("#data").val().split("\n");
 };
     </textarea>
 </div>
+
+    <input type="submit" value="Save"/>
+
+    </form>
+
 <div style="float: left">
     <input type="button" value="Run" onclick="run();"/>
 </div>
