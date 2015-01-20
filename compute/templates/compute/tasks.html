@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+    <script src="/static/jquery-2.1.1.js"></script>
+</head>
+
+<body>
+Tasks
+<div id="tasks">
+{% if tasks %}
+    <ul>
+    {% for task in tasks %}
+        <li><a href="/task/{{ task.id }}/">{{ task.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>There are no tasks.</p>
+{% endif %}
+</div>
+
+</body>
+</html>
