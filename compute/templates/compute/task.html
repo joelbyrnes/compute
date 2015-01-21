@@ -25,6 +25,13 @@
             this.thenFunction(data);
         }
 
+        function generateData() {
+            eval($("#datafn").val());
+            var data = getData();
+            console.log(data);
+            $("#data").html(JSON.stringify(data));
+        }
+
         function run() {
             var workers = parseInt($('#workers').val());
             eval($("#mapfn").val());
@@ -60,268 +67,50 @@
 <input type="button" value="Resume" onclick="unPause()"/>
 <br/>
 
-<form name="save_task" action="save_task" method="POST">
+<form name="save_task" action="{% url 'save_task' %}" method="POST">
     {% csrf_token %}
+    <input type="hidden" name="id" value="{{ task.id }}"/>
         <label>Name
-            <input type="text" name="name" value=""/>
+            <input type="text" name="name" value="{{ task.name }}"/>
         </label>
     <br/>
 
     <div style="float: left">
     <label for="mapfn">Map</label><br/>
     <textarea id="mapfn" name="map_func" cols="40" rows="10">
-function map(data) {
-    var r = {};
-    r[data.length] = [data];
-    return r;
-};
+{{ task.map_func }}
     </textarea>
 </div>
 <div style="float: left">
     <label for="reducefn">Reduce</label><br/>
     <textarea id="reducefn" name="reduce_func" cols="40" rows="10">
-function reduce(data) {
-    var r = {};
-
-    for (var dk in data) {
-        var d = data[dk];
-        for (var k in d) {
-            if (!r.hasOwnProperty(k)) r[k] = [];
-            r[k] = r[k].concat(d[k]);
-        }
-    }
-
-    return r;
-}
+{{ task.reduce_func }}
     </textarea>
 </div>
 <div style="float: left">
     <label for="thenfn">Then</label><br/>
     <textarea id="thenfn" name="then_func" cols="40" rows="10">
-function then(data) {
-    var results = "";
-    for (var dk in data) {
-    results += dk + ": " + data[dk].length + "<br/>";
-    }
-
-    var elem = $("#results");
-    elem.html(results);
-};
+{{ task.then_func }}
     </textarea>
 </div>
 <br/>
 <div style="float: left">
 <label for="input">Input</label><br/>
-    <textarea id="input" name="input" cols="50" rows="10">
-a
-able
-aboard
-about
-above
-absence
-accept
-accident
-according
-account
-across
-act
-action
-add
-addition
-address
-adopt
-affair
-afraid
-after
-afternoon
-again
-against
-age
-ago
-agreement
-air
-alike
-all
-allege
-allow
-almost
-alone
-along
-already
-also
-although
-always
-am
-among
-amount
-an
-and
-annual
-another
-answer
-any
-anything
-anyway
-appear
-application
-appoint
-appreciate
-April
-are
-argument
-army
-around
-arrange
-arrangement
-arrest
-arrive
-article
-as
-ask
-assist
-associate
-association
-assure
-at
-athletic
-attempt
-attend
-attention
-August
-aunt
-auto
-automobile
-avenue
-await
-away
-awful
-baby
-back
-bad
-ball
-band
-be
-bear
-beautiful
-became
-because
-become
-bed
-been
-before
-beg
-began
-begin
-beginning
-begun
-behind
-believe
-belong
-beside
-best
-better
-between
-big
-bill
-black
-block
-blow
-blue
-board
-boat
-body
-book
-born
-both
-bought
-box
-boy
-bridge
-bring
-broke
-brother
-brought
-build
-built
-burn
-business
-busy
-but
-buy
-by
-call
-came
-camp
-can
-cannot
-capture
-car
-card
-care
-career
-carried
-carry
-case
-cast
-catch
-cause
-celebration
-cent
-center
-century
-certain
-chain
-change
-character
-charge
-check
-chief
-child
-children
-Christmas
-church
-circular
-circumstance
-cities
-citizen
-city
-claim
-class
-clean
-clear
-clerk
-close
-clothing
-club
-cold
-collect
-colonies
-combination
-come
-comfort
-coming
-command
-committee
-common
-company
-complaint
-complete
-concern
-condition
-conference
-connection
-consider
-consideration
-contain
-contract
-    </textarea>
+    <textarea id="input" name="input" cols="50" rows="10"></textarea>
 </div>
 <div style="float: left">
     <label for="datafn">getData</label><br/>
     <textarea id="datafn" name="data_func" cols="40" rows="6">
 function getData(data) {
-    return $("#data").val().split("\n");
+    return $("#input").val().split("\n");
 };
+    </textarea>
+    <input type="button" value="Generate data" onclick="generateData();"/>
+</div>
+<div style="float: left">
+    <label for="data">JSON Data</label><br/>
+    <textarea id="data" name="data" cols="40" rows="6">
+{{ task.data }}
     </textarea>
 </div>
 

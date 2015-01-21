@@ -7,7 +7,7 @@ urlpatterns = patterns('',
 
        url(r'^test$', views.test, name='test'),
 
-       url(r'^tasks$', views.tasks, name='tasks'),
+       url(r'^tasks/?$', views.tasks, name='tasks'),
 
        url(r'^task/(?P<task_id>\d+)/$', views.task, name='task'),
 

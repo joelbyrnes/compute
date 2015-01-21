@@ -1,7 +1,7 @@
 from django.db import models
 
 class DistributedTask(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     map_func = models.TextField()
     reduce_func = models.TextField()
     then_func = models.TextField()
