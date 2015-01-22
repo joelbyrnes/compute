@@ -13,4 +13,6 @@ urlpatterns = patterns('',
 
        url(r'^new_task$', views.new_task, name='new_task'),
        url(r'^save_task$', views.save_task, name='save_task'),
+
+       url(r'^task/(?P<task_id>\d+)/run$', views.run, name='run'),
 )

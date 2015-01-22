@@ -20,7 +20,6 @@ def task(request, task_id):
 
 def new_task(request):
     task = DistributedTask()
-    # question = Question.objects.get(pk=question_id)
     return render(request, 'compute/task.html', {'task': task})
 
 def save_task(request):
@@ -36,4 +35,8 @@ def save_task(request):
     task.save()
 
     return render(request, 'compute/task.html', {'task': task})
+
+def run(request, task_id):
+    task = get_object_or_404(DistributedTask, pk=task_id)
+    return render(request, 'compute/run.html', {'task': task})
 
