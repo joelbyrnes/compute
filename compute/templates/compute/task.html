@@ -25,11 +25,13 @@
             this.thenFunction(data);
         }
 
-        function generateData() {
+        function getData() {
+            return $("#input").val().split("\n");
+        }
+
+        function loadData() {
             eval($("#datafn").val());
-            var data = getData();
-            console.log(data);
-            $("#data").html(JSON.stringify(data));
+            generateData();
         }
 
         function run() {
@@ -37,7 +39,6 @@
             eval($("#mapfn").val());
             eval($("#reducefn").val());
             eval($("#thenfn").val());
-            eval($("#datafn").val());
 
             this.thenFunction = then;
 
@@ -99,13 +100,15 @@
     <textarea id="input" name="input" cols="50" rows="10"></textarea>
 </div>
 <div style="float: left">
-    <label for="datafn">getData</label><br/>
+    <label for="datafn">generateData (not saved)</label><br/>
     <textarea id="datafn" name="data_func" cols="40" rows="6">
-function getData(data) {
-    return $("#input").val().split("\n");
-};
+function generateData() {
+    var data = $("#input").val().split("\n");
+    console.log(data);
+    $("#data").html(JSON.stringify(data));
+}
     </textarea>
-    <input type="button" value="Generate data" onclick="generateData();"/>
+    <input type="button" value="Generate data" onclick="loadData();"/>
 </div>
 <div style="float: left">
     <label for="data">JSON Data</label><br/>
