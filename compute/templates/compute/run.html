@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Distributed Task</title>
+    <title>Run Task</title>
     <script src="/static/jquery-2.1.1.js"></script>
     <script src="/static/underscore-min.js"></script>
     <script src="/static/paralleljs/lib/parallel.js"></script>
@@ -16,34 +16,25 @@
         function unPause() {
             pause = false;
         }
+        {% autoescape off %}
+
+        {{ task.map_func }}
+        {{ task.reduce_func }}
+        {{ task.then_func }}
+
+        var data = {{ task.data }};
+        {% endautoescape %}
 
         function internalThen(data) {
             $("#resultsMessage").html("Work completed in " + (Date.now() - start) + " millis; " + _.keys(data).length + " results.");
 
             console.log(data);
 
-            this.thenFunction(data);
-        }
-
-        function getData() {
-            return $("#input").val().split("\n");
-        }
-
-        function loadData() {
-            eval($("#mapfn").val());
-            generateData();
+            then(data);
         }
 
         function run() {
             var workers = parseInt($('#workers').val());
-            eval($("#mapfn").val());
-            eval($("#reducefn").val());
-            eval($("#thenfn").val());
-{#            eval($("#datafn").val());#}
-
-            this.thenFunction = then;
-
-            var data = getData();
 
             console.log("creating " + workers + " parallel workers dividing " + data.length + " jobs");
 
@@ -69,15 +60,9 @@
 <input type="button" value="Resume" onclick="unPause()"/>
 <br/>
 
-<form name="save_task" action="{% url 'save_task' %}" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="id" value="{{ task.id }}"/>
-        <label>Name
-            <input type="text" name="name" value="{{ task.name }}"/>
-        </label>
-    <br/>
+<h3>{{ task.name }}</h3>
 
-    <div style="float: left">
+<div style="float: left">
     <label for="mapfn">Map</label><br/>
     <textarea id="mapfn" name="map_func" cols="40" rows="10">
 {{ task.map_func }}
@@ -95,33 +80,13 @@
 {{ task.then_func }}
     </textarea>
 </div>
-<br/>
-<div style="float: left">
-<label for="input">Input</label><br/>
-    <textarea id="input" name="input" cols="50" rows="10"></textarea>
-</div>
-<div style="float: left">
-    <label for="datafn">generateData (not saved)</label><br/>
-    <textarea id="datafn" name="data_func" cols="40" rows="6">
-function generateData() {
-    eval($("#datafn").val());
-    var data = $("#input").val().split("\n");
-    console.log(data);
-    $("#data").html(JSON.stringify(data));
-}
-    </textarea>
-    <input type="button" value="Generate data" onclick="loadData();"/>
-</div>
+
 <div style="float: left">
     <label for="data">JSON Data</label><br/>
     <textarea id="data" name="data" cols="40" rows="6">
 {{ task.data }}
     </textarea>
 </div>
-
-    <input type="submit" value="Save"/>
-
-    </form>
 
 <div style="float: left">
     <input type="button" value="Run" onclick="run();"/>
