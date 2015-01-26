@@ -32,7 +32,7 @@ def save_task(request):
     task.map_func = request.POST.get("map_func")
     task.reduce_func = request.POST.get("reduce_func")
     task.then_func = request.POST.get("then_func")
-    task.data = request.POST.get("data") or ""
+    task.data = request.POST.get("data") or "[]"
     task.save()
 
     return render(request, 'compute/task.html', {'task': task})
