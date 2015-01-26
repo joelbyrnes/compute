@@ -1,0 +1,13 @@
+[
+    {
+        "fields": {
+            "reduce_func": "function reduce(data) {\r\n    var r = {};\r\n\r\n    for (var dk in data) {\r\n        var d = data[dk];\r\n        for (var k in d) {\r\n            if (!r.hasOwnProperty(k)) r[k] = [];\r\n            r[k] = r[k].concat(d[k]);\r\n        }\r\n    }\r\n\r\n    return r;\r\n}\r\n    ",
+            "data": "                \r\n    \r\n    ",
+            "map_func": "function map(data) {\r\n    var r = {};\r\n    r[data.length] = [data];\r\n    return r;\r\n};\r\n    ",
+            "then_func": "function then(data) {\r\n    var results = \"\";\r\n    for (var dk in data) {\r\n        results += dk + \": \" + data[dk].length + \"<br/>\";\r\n    }\r\n\r\n    var elem = $(\"#results\");\r\n    elem.html(results);\r\n};\r\n    ",
+            "name": "words"
+        },
+        "model": "compute.distributedtask",
+        "pk": 2
+    }
+]

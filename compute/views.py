@@ -22,11 +22,12 @@ def new_task(request):
     task = DistributedTask()
     return render(request, 'compute/task.html', {'task': task})
 
+# save or update
 def save_task(request):
     task = DistributedTask()
-    id = request.POST.get("id")
-    if id:
-        task = DistributedTask.objects.get(pk=id)
+    task_id = request.POST.get("id")
+    if task_id:
+        task = DistributedTask.objects.get(pk=task_id)
     task.name = request.POST.get("name")
     task.map_func = request.POST.get("map_func")
     task.reduce_func = request.POST.get("reduce_func")
