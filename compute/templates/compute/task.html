@@ -70,56 +70,60 @@
 
 <form name="save_task" action="{% url 'save_task' %}" method="POST">
     {% csrf_token %}
-    <input type="hidden" name="id" value="{{ task.id }}"/>
-        <label>Name
-            <input type="text" name="name" value="{{ task.name }}"/>
-        </label>
+
+    {% if task.id %}
+        <input type="hidden" name="id" value="{{ task.id }}"/>
+    {% endif %}
+
+    <label>Name
+        <input type="text" name="name" value="{{ task.name }}"/>
+    </label>
     <br/>
 
     <div style="float: left">
-    <label for="mapfn">Map</label><br/>
-    <textarea id="mapfn" name="map_func" cols="40" rows="10">
+        <label for="mapfn">Map</label><br/>
+        <textarea id="mapfn" name="map_func" cols="40" rows="10">
 {{ task.map_func }}
-    </textarea>
-</div>
-<div style="float: left">
-    <label for="reducefn">Reduce</label><br/>
-    <textarea id="reducefn" name="reduce_func" cols="40" rows="10">
+        </textarea>
+    </div>
+    <div style="float: left">
+        <label for="reducefn">Reduce</label><br/>
+        <textarea id="reducefn" name="reduce_func" cols="40" rows="10">
 {{ task.reduce_func }}
-    </textarea>
-</div>
-<div style="float: left">
-    <label for="thenfn">Then</label><br/>
-    <textarea id="thenfn" name="then_func" cols="40" rows="10">
+        </textarea>
+    </div>
+    <div style="float: left">
+        <label for="thenfn">Then</label><br/>
+        <textarea id="thenfn" name="then_func" cols="40" rows="10">
 {{ task.then_func }}
-    </textarea>
-</div>
-<br/>
-<div style="float: left">
-<label for="input">Input</label><br/>
-    <textarea id="input" name="input" cols="50" rows="10"></textarea>
-</div>
-<div style="float: left">
-    <label for="datafn">generateData (not saved)</label><br/>
-    <textarea id="datafn" name="data_func" cols="40" rows="6">
+        </textarea>
+    </div>
+    <br/>
+    <div style="float: left">
+        <label for="input">Input</label><br/>
+        <textarea id="input" name="input" cols="50" rows="10"></textarea>
+    </div>
+    <div style="float: left">
+        <label for="datafn">generateData (not saved)</label><br/>
+        <textarea id="datafn" name="data_func" cols="40" rows="6">
 function generateData() {
     var data = $("#input").val().split("\n");
     console.log(data);
     $("#data").html(JSON.stringify(data));
 }
-    </textarea>
-    <input type="button" value="Generate data" onclick="loadData();"/>
-</div>
-<div style="float: left">
-    <label for="data">JSON Data</label><br/>
-    <textarea id="data" name="data" cols="40" rows="6">
+        </textarea>
+        <input type="button" value="Generate data" onclick="loadData();"/>
+    </div>
+    <div style="float: left">
+        <label for="data">JSON Data</label><br/>
+        <textarea id="data" name="data" cols="40" rows="6">
 {{ task.data }}
-    </textarea>
-</div>
+        </textarea>
+    </div>
 
     <input type="submit" value="Save"/>
 
-    </form>
+</form>
 
 <div style="float: left">
     <input type="button" value="Run" onclick="run();"/>
